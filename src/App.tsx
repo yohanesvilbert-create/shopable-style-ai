@@ -8,6 +8,7 @@ import StylistPage from "./pages/StylistPage";
 import BagPage from "./pages/BagPage";
 import LoyaltyPage from "./pages/LoyaltyPage";
 import LooksPage from "./pages/LooksPage";
+import ProductCatalogPage from "./pages/ProductCatalogPage";
 import NotFound from "./pages/NotFound";
 import { BottomNav } from "./components/BottomNav";
 
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/looks" element={<LooksPage />} />
             <Route path="/bag" element={<BagPage />} />
             <Route path="/loyalty" element={<LoyaltyPage />} />
+            <Route path="/catalog" element={<ProductCatalogPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <BottomNav />

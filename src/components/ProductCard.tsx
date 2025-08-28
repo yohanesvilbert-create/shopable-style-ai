@@ -1,4 +1,5 @@
 import { Plus, Heart } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface ProductCardProps {
   image: string;
@@ -23,8 +24,17 @@ export function ProductCard({
   onWishlist,
   className = ""
 }: ProductCardProps) {
+  const navigate = useNavigate();
+  
+  const handleCardClick = () => {
+    navigate('/catalog');
+  };
+
   return (
-    <div className={`product-card ${className}`}>
+    <div 
+      className={`product-card ${className} cursor-pointer hover:shadow-lg transition-shadow`}
+      onClick={handleCardClick}
+    >
       <div className="relative">
         <img 
           src={image} 
@@ -33,7 +43,10 @@ export function ProductCard({
         />
         {onWishlist && (
           <button 
-            onClick={onWishlist}
+            onClick={(e) => {
+              e.stopPropagation();
+              onWishlist();
+            }}
             className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white/80 flex items-center justify-center hover:bg-white transition-all duration-200"
           >
             <Heart size={14} className="text-text-secondary" />
@@ -79,7 +92,10 @@ export function ProductCard({
           
           {onAdd && (
             <button 
-              onClick={onAdd}
+              onClick={(e) => {
+                e.stopPropagation();
+                onAdd();
+              }}
               className="fashion-button-primary py-2 px-4 text-sm flex items-center space-x-1"
             >
               <Plus size={14} />
