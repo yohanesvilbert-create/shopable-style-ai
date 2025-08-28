@@ -122,7 +122,12 @@ export default function HomePage() {
         <section>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-bold text-text-primary">Trending Picks</h3>
-            <ArrowRight size={20} className="text-text-muted" />
+            <button 
+              onClick={() => navigate('/catalog')}
+              className="text-text-muted hover:text-text-primary transition-colors"
+            >
+              <ArrowRight size={20} />
+            </button>
           </div>
           
           <div className="flex overflow-x-auto space-x-4 pb-2">

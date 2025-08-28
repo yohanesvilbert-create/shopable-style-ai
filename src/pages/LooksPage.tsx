@@ -12,11 +12,14 @@ import {
 import { AppHeader } from '@/components/AppHeader';
 import { StyleChip } from '@/components/StyleChip';
 import { ProductCard } from '@/components/ProductCard';
+import { useNavigate } from 'react-router-dom';
 import sneakersImage from '@/assets/sneakers-white.jpg';
 import toteImage from '@/assets/tote-bag-beige.jpg';
 import crossbodyImage from '@/assets/crossbody-khaki.jpg';
 
 export default function LooksPage() {
+  const navigate = useNavigate();
+  
   const filterChips = [
     { label: "Warm neutrals" },
     { label: "Under RM800" },
@@ -114,7 +117,7 @@ export default function LooksPage() {
                   <p className="text-sm text-text-muted">{collection.subtitle}</p>
                 </div>
                 <button 
-                  onClick={() => console.log('More like:', collection.title)}
+                  onClick={() => navigate('/catalog')}
                   className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full
                     bg-primary hover:bg-primary-dark transition-colors duration-200"
                   title="More like this"
