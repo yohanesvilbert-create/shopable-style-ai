@@ -43,6 +43,7 @@ export default function BagPage() {
   const [showSmartNudge, setShowSmartNudge] = useState(false);
   const [selectedDiscounts, setSelectedDiscounts] = useState<string[]>([]);
   const [appliedDiscounts, setAppliedDiscounts] = useState<string[]>([]);
+  const [discountsExpanded, setDiscountsExpanded] = useState(false);
 
   const betterPicks = [
     {
@@ -466,8 +467,11 @@ export default function BagPage() {
               </Button>
             </div>
 
-            <div className="space-y-3">
-              {availableDiscounts.map((discount) => (
+            <div className={`space-y-3 ${availableDiscounts.length > 4 && discountsExpanded ? 'max-h-80 overflow-y-auto' : ''}`}>
+              {availableDiscounts
+                .sort((a, b) => b.savings - a.savings) // Sort by best deal first
+                .slice(0, discountsExpanded ? 4 : 2) // Show 2 initially, 4 when expanded
+                .map((discount) => (
                 <div 
                   key={discount.id} 
                   className={`p-3 rounded-lg border transition-all ${
@@ -503,6 +507,21 @@ export default function BagPage() {
                 </div>
               ))}
             </div>
+
+            {/* Expand/Collapse Button */}
+            {availableDiscounts.length > 2 && (
+              <div className="flex justify-center">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setDiscountsExpanded(!discountsExpanded)}
+                  className="text-xs text-gray-600 hover:text-gray-900"
+                >
+                  {discountsExpanded ? 'Show Less' : `Show More (${availableDiscounts.length - 2} more)`}
+                  <ChevronDown className={`ml-1 h-3 w-3 transition-transform ${discountsExpanded ? 'rotate-180' : ''}`} />
+                </Button>
+              </div>
+            )}
 
             {/* AI Personalized Nudges */}
             {selectedDiscounts.length > 0 && (
