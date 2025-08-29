@@ -1,4 +1,5 @@
-import { ShoppingBag, User } from 'lucide-react';
+import { ShoppingBag, User, Heart } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface AppHeaderProps {
   title?: string;
@@ -6,6 +7,8 @@ interface AppHeaderProps {
 }
 
 export function AppHeader({ title = "ShopAble Fashion", showProfile = true }: AppHeaderProps) {
+  const navigate = useNavigate();
+
   return (
     <header className="flex items-center justify-between px-4 py-3 bg-card border-b border-border">
       <div className="flex items-center space-x-2.5">
@@ -20,13 +23,25 @@ export function AppHeader({ title = "ShopAble Fashion", showProfile = true }: Ap
       </div>
       
       {showProfile && (
-        <button className="w-9 h-9 rounded-full border border-border/60 bg-card flex items-center justify-center hover:border-border hover:shadow-sm transition-all duration-200">
-          <User 
-            size={16} 
-            className="text-text-secondary" 
-            strokeWidth={1.5}
-          />
-        </button>
+        <div className="flex items-center space-x-2">
+          <button 
+            onClick={() => navigate('/wishlist')}
+            className="w-9 h-9 rounded-full border border-border/60 bg-card flex items-center justify-center hover:border-border hover:shadow-sm transition-all duration-200"
+          >
+            <Heart 
+              size={16} 
+              className="text-text-secondary" 
+              strokeWidth={1.5}
+            />
+          </button>
+          <button className="w-9 h-9 rounded-full border border-border/60 bg-card flex items-center justify-center hover:border-border hover:shadow-sm transition-all duration-200">
+            <User 
+              size={16} 
+              className="text-text-secondary" 
+              strokeWidth={1.5}
+            />
+          </button>
+        </div>
       )}
     </header>
   );

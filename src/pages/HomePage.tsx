@@ -108,7 +108,10 @@ export default function HomePage() {
               </div>
             </div>
             
-            <div className="alert-card">
+            <div 
+              className="alert-card cursor-pointer hover:bg-accent/5 transition-colors"
+              onClick={() => navigate('/watchlist')}
+            >
               <Bookmark size={20} className="text-info flex-shrink-0" />
               <div>
                 <p className="text-sm font-medium text-text-primary">Mini Crossbody (Khaki)</p>

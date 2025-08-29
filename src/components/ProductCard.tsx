@@ -1,6 +1,8 @@
 import { Plus, Heart } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface ProductCardProps {
+  id?: string;
   image: string;
   name: string;
   price: string;
@@ -13,6 +15,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({
+  id = '1',
   image,
   name,
   price,
@@ -23,8 +26,20 @@ export function ProductCard({
   onWishlist,
   className = ""
 }: ProductCardProps) {
+  const navigate = useNavigate();
+  
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't navigate if clicking on action buttons
+    if ((e.target as HTMLElement).closest('button')) {
+      return;
+    }
+    navigate(`/product/${id}`);
+  };
   return (
-    <div className={`product-card ${className}`}>
+    <div 
+      className={`product-card cursor-pointer hover:shadow-lg transition-all duration-200 ${className}`}
+      onClick={handleCardClick}
+    >
       <div className="relative">
         <img 
           src={image} 
