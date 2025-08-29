@@ -40,6 +40,9 @@ export default function BagPage() {
   const [selectedVendor, setSelectedVendor] = useState('jne');
   const [promoCode, setPromoCode] = useState('');
   const [currentInsight, setCurrentInsight] = useState(0);
+  const [showSmartNudge, setShowSmartNudge] = useState(false);
+  const [selectedDiscounts, setSelectedDiscounts] = useState<string[]>([]);
+  const [appliedDiscounts, setAppliedDiscounts] = useState<string[]>([]);
 
   const betterPicks = [
     {
@@ -100,6 +103,50 @@ export default function BagPage() {
     { icon: '🌱', text: "Your choices reduced CO₂ by 2kg vs alternatives" }
   ];
 
+  const availableDiscounts = [
+    {
+      id: 'fashion15',
+      title: '15% OFF Fashion Voucher',
+      description: 'Save RM25 on your order',
+      savings: 25.00,
+      expiry: 'Expires in 2 days',
+      type: 'voucher',
+      eligible: true,
+      stackable: false
+    },
+    {
+      id: 'loyalty500',
+      title: 'Use 500 Loyalty Points',
+      description: 'Convert points to RM5 off',
+      savings: 5.00,
+      expiry: 'Points don\'t expire',
+      type: 'loyalty',
+      eligible: true,
+      stackable: true
+    },
+    {
+      id: 'bcacard',
+      title: 'BCA Card 5% Cashback',
+      description: 'Extra 5% cashback (applied instantly)',
+      savings: 15.45,
+      expiry: 'Limited time offer',
+      type: 'payment',
+      eligible: true,
+      stackable: true
+    },
+    {
+      id: 'flashsale',
+      title: 'Flash Sale 20% OFF',
+      description: 'Limited time flash discount',
+      savings: 35.80,
+      expiry: 'Ends in 1h 20m',
+      type: 'flash',
+      eligible: true,
+      stackable: false,
+      urgent: true
+    }
+  ];
+
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const shipping = shippingMethods[selectedMethod].price;
   const discount = 25.00;
@@ -117,6 +164,51 @@ export default function BagPage() {
   };
 
   const currentVendors = vendors[selectedMethod] || [];
+
+  // Discount management functions
+  const applyPromoCode = () => {
+    if (promoCode.trim()) {
+      // Simulate promo code application
+      console.log('Applying promo code:', promoCode);
+      setPromoCode('');
+    }
+  };
+
+  const toggleDiscount = (discountId: string) => {
+    const discount = availableDiscounts.find(d => d.id === discountId);
+    if (!discount) return;
+
+    if (selectedDiscounts.includes(discountId)) {
+      setSelectedDiscounts(prev => prev.filter(id => id !== discountId));
+    } else {
+      if (!discount.stackable) {
+        // If not stackable, replace other non-stackable discounts
+        const newSelected = selectedDiscounts.filter(id => {
+          const existing = availableDiscounts.find(d => d.id === id);
+          return existing?.stackable;
+        });
+        setSelectedDiscounts([...newSelected, discountId]);
+      } else {
+        setSelectedDiscounts(prev => [...prev, discountId]);
+      }
+    }
+  };
+
+  const applyBestDeals = () => {
+    // AI logic to select optimal discount combination
+    const bestCombination = availableDiscounts
+      .filter(d => d.eligible)
+      .sort((a, b) => b.savings - a.savings)
+      .slice(0, 2); // Take top 2 for demo
+    
+    setSelectedDiscounts(bestCombination.map(d => d.id));
+    setAppliedDiscounts(bestCombination.map(d => d.id));
+  };
+
+  const totalDiscountSavings = selectedDiscounts.reduce((sum, id) => {
+    const discount = availableDiscounts.find(d => d.id === id);
+    return sum + (discount?.savings || 0);
+  }, 0);
 
   return (
     <div className="bg-gray-50 min-h-screen pb-32">
@@ -338,7 +430,7 @@ export default function BagPage() {
 
         {/* Voucher & Discount */}
         <section>
-          <div className="bg-white rounded-2xl shadow-sm p-4">
+          <div className="bg-white rounded-2xl shadow-sm p-4 space-y-4">
             <h3 className="font-medium text-gray-900 text-sm mb-3">Promo Code</h3>
             <div className="flex space-x-2">
               <Input
@@ -347,8 +439,88 @@ export default function BagPage() {
                 onChange={(e) => setPromoCode(e.target.value)}
                 className="flex-1"
               />
-              <Button variant="outline">Apply</Button>
+              <Button variant="outline" onClick={applyPromoCode}>Apply</Button>
             </div>
+
+            {/* AI Dynamic Discount Optimizer */}
+            <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-3">
+              <p className="text-sm font-medium text-purple-900 mb-2">🔥 Limited deal: Get FREE Express Shipping if you checkout in the next 10 minutes.</p>
+              <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white">
+                Apply Offer
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* Current Applicable Discounts - New Section */}
+        <section>
+          <div className="bg-white rounded-2xl shadow-sm p-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-medium text-gray-900 text-sm">Available Discounts</h3>
+              <Button 
+                size="sm" 
+                className="bg-black hover:bg-gray-800 text-white text-xs"
+                onClick={applyBestDeals}
+              >
+                Apply Best Deal
+              </Button>
+            </div>
+
+            <div className="space-y-3">
+              {availableDiscounts.map((discount) => (
+                <div 
+                  key={discount.id} 
+                  className={`p-3 rounded-lg border transition-all ${
+                    selectedDiscounts.includes(discount.id)
+                      ? 'border-black bg-gray-50' 
+                      : 'border-gray-200 hover:border-gray-300'
+                  } ${discount.urgent ? 'border-orange-300 bg-orange-50' : ''}`}
+                >
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type={discount.stackable ? "checkbox" : "radio"}
+                      name={discount.stackable ? undefined : "discount"}
+                      checked={selectedDiscounts.includes(discount.id)}
+                      onChange={() => toggleDiscount(discount.id)}
+                      className="w-4 h-4"
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-medium text-gray-900 text-sm">{discount.title}</h4>
+                        {discount.urgent && (
+                          <span className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full">
+                            URGENT
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-600 mt-1">{discount.description}</p>
+                      <div className="flex items-center justify-between mt-1">
+                        <span className="text-xs text-gray-500">{discount.expiry}</span>
+                        <span className="text-sm font-bold text-green-600">-RM{discount.savings.toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* AI Personalized Nudges */}
+            {selectedDiscounts.length > 0 && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-xs text-blue-800">
+                  💡 Best Deal: Flash Sale 20% OFF saves you RM35.80 vs 15% Fashion Voucher (RM25). 
+                  Total savings: RM{totalDiscountSavings.toFixed(2)}
+                </p>
+              </div>
+            )}
+
+            {!selectedDiscounts.length && (
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                <p className="text-xs text-amber-800">
+                  🎯 Use your 500 points now for RM5 off — or save for RM20 voucher at 2000 points.
+                </p>
+              </div>
+            )}
           </div>
         </section>
 
