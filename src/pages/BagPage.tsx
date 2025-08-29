@@ -1,10 +1,8 @@
 import { useState } from 'react';
-import { Minus, Plus, Star, ArrowUpDown, ChevronRight, ChevronDown, Truck, Package, Clock, Gift } from 'lucide-react';
+import { Minus, Plus, Star, ArrowUpDown, ChevronRight, ChevronDown, Truck } from 'lucide-react';
 import { AppHeader } from '@/components/AppHeader';
-import { ProductCard } from '@/components/ProductCard';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import toteImage from '@/assets/tote-bag-beige.jpg';
 import sneakersImage from '@/assets/sneakers-white.jpg';
@@ -104,7 +102,7 @@ export default function BagPage() {
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const shipping = shippingMethods[selectedMethod].price;
-  const discount = 25.00; // Example discount
+  const discount = 25.00;
   const total = subtotal + shipping - discount;
 
   const updateQuantity = (id: number, newQuantity: number) => {
